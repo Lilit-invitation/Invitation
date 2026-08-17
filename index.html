@@ -2,10 +2,10 @@
 <html lang="hy">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Սամսոն & Լիլիթ — Հարսանեկան հրավիրատոմս</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5efe5;font-family:Arial,sans-serif}.book{height:100%;display:flex;align-items:center;justify-content:center;position:relative}.page{position:absolute;max-width:100vw;max-height:100vh;width:auto;height:auto;object-fit:contain;display:none;user-select:none;-webkit-user-drag:none}.page.active{display:block}.hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.62);color:white;padding:10px 16px;border-radius:24px;font-size:14px;z-index:5;white-space:nowrap}.music{position:fixed;right:14px;top:14px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.85);font-size:20px;z-index:6}.start{position:fixed;inset:0;background:rgba(245,239,229,.96);display:flex;align-items:center;justify-content:center;z-index:10}.start button{border:0;border-radius:30px;padding:15px 24px;font-size:17px;background:#222;color:#fff}.counter{position:fixed;top:18px;left:18px;background:rgba(255,255,255,.7);padding:6px 10px;border-radius:16px;font-size:12px;z-index:5}
+*{box-sizing:border-box}html,body{overflow-x:hidden;width:100%;margin:0;}
 </style></head>
 <body>
 <div class="book" id="book">
@@ -16,19 +16,20 @@
   <img class="page" src="page-5.jpg" alt="Էջ 5">
 </div>
 <div class="counter" id="counter">1 / 5</div>
-<button class="music" id="music" aria-label="Երաժշտություն">🔊</button>
-<div class="hint">Թերթելու համար սահեցրեք ձախ կամ աջ</div>
-<div class="start" id="start"><button id="startBtn">Բացել հրավիրատոմսը 💍</button></div>
+<button class="music" id="music" aria-label="Music"></button>
+<div class="hint">Թերթելու համար սահեցրեք ներքև</div>
+<div class="start" id="start"><button id="startBtn">Բացել</button></div>
 <audio id="audio" loop preload="auto"><source src="Hayko - Amena from 00-55.mp3" type="audio/mpeg"></audio>
 <script>
-const pages=[...document.querySelectorAll('.page')], audio=document.getElementById('audio'), start=document.getElementById('start'), counter=document.getElementById('counter'), music=document.getElementById('music');
+const pages=[...document.querySelectorAll('.page')];
 let i=0, downX=0, downY=0;
-function show(n){i=Math.max(0,Math.min(pages.length-1,n));pages.forEach((p,k)=>p.classList.toggle('active',k===i));counter.textContent=`${i+1} / ${pages.length}`}
-function next(){if(i<pages.length-1)show(i+1)} function prev(){if(i>0)show(i-1)}
-async function begin(){start.style.display='none';try{await audio.play();music.textContent='🔊'}catch(e){music.textContent='🔇'}}
+function show(n){i=Math.max(0,Math.min(pages.length-1,n));pages.forEach((p,idx)=>p.classList.toggle('active',idx===i));document.getElementById('counter').innerText=`${i+1} / ${pages.length}`;}
+function next(){if(i<pages.length-1)show(i+1);}
+function prev(){if(i>0)show(i-1);}
+async function begin(){document.getElementById('start').style.display='none';try{await document.getElementById('audio').play();}catch(e){}}
 document.getElementById('startBtn').addEventListener('click',begin);
-music.addEventListener('click',async()=>{if(audio.paused){try{await audio.play();music.textContent='🔊'}catch(e){}}else{audio.pause();music.textContent='🔇'}});
-document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev()});
-document.addEventListener('touchstart',e=>{downX=e.changedTouches[0].clientX;downY=e.changedTouches[0].clientY},{passive:true});
-document.addEventListener('touchend',e=>{const x=e.changedTouches[0].clientX,y=e.changedTouches[0].clientY;const dx=x-downX,dy=y-downY;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev()}},{passive:true});
+document.getElementById('music').addEventListener('click',async()=>{const a=document.getElementById('audio');if(a.paused)await a.play();else a.pause();});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();});
+document.addEventListener('touchstart',e=>{downX=e.touches[0].clientX;downY=e.touches[0].clientY;});
+document.addEventListener('touchend',e=>{const diffX=e.changedTouches[0].clientX-downX;const diffY=e.changedTouches[0].clientY-downY;if(Math.abs(diffX)>Math.abs(diffY)&&Math.abs(diffX)>30){if(diffX<0)next();else prev();}});
 </script></body></html>
