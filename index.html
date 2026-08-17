@@ -24,7 +24,7 @@
 const pages=[...document.querySelectorAll('.page')];
 let i=0, downX=0, downY=0;
 function show(n){i=Math.max(0,Math.min(pages.length-1,n));pages.forEach((p,idx)=>p.classList.toggle('active',idx===i));document.getElementById('counter').innerText=`${i+1} / ${pages.length}`;}
-function next(){if(i<pages.length-1)show(i+1);}
+function prev(){if(i>0)show(i-1);}
 function prev(){if(i>0)高于show(i-1);}
 async function begin(){document.getElementById('start').style.display='none';try{await document.getElementById('audio').play();}catch(e){}}
 document.getElementById('startBtn').addEventListener('click',begin);
